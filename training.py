@@ -88,7 +88,7 @@ class CustomCallback(keras.callbacks.Callback):
         sys.stderr.write('\r\033[K')
         sys.stdout.write(
             'Epoch: {}/{} | Time: {} | Train: LR {}  Loss {:.3f}%  Acc {:.3f}% | Val: Loss {:.3f}%  Acc(top1) {:.3f}%\n'.format(
-                epoch+1, self.opt.nEpochs, U.to_hms(time_taken), self.curLr, logs['loss'], logs['acc'], val_loss, val_acc));
+                epoch+1, self.opt.nEpochs, U.to_hms(time_taken), self.curLr, logs['loss'], logs['accuracy'], val_loss, val_acc));
         sys.stdout.flush();
 
     def validate(self, model):
