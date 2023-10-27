@@ -18,7 +18,7 @@ class Trainer:
         envnet2 = models.EnvNet2(66650, 50);
         model = envnet2.createModel();
         print(model.summary());
-        exit();
+        # exit();
         trainGen, valGen = dataset.setup(self.opt, self.split);
         loss = 'kullback_leibler_divergence'
         optimizer = keras.optimizers.SGD(lr=self.opt.LR, decay=self.opt.weightDecay, momentum=self.opt.momentum, nesterov=True)
