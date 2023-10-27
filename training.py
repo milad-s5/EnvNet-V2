@@ -21,14 +21,15 @@ class Trainer:
         # exit();
         trainGen, valGen = dataset.setup(self.opt, self.split);
         loss = 'kullback_leibler_divergence'
-        optimizer = keras.optimizers.SGD(lr=self.opt.LR, decay=self.opt.weightDecay, momentum=self.opt.momentum, nesterov=True)
+        # optimizer = keras.optimizers.SGD(lr=self.opt.LR, decay=self.opt.weightDecay, momentum=self.opt.momentum, nesterov=True)
+        optimizer = keras.optimizers.legacy.SGD(lr=self.opt.LR, decay=self.opt.weightDecay, momentum=self.opt.momentum, nesterov=True)
 
         model.compile(loss=loss, optimizer=optimizer , metrics=['accuracy']);
 
         # learning schedule callback
         lrate = keras.callbacks.LearningRateScheduler(self.GetLR);
         #best_model = keras.callbacks.ModelCheckpoint('best_model_fold-'+str(self.split )+'_epoch-{epoch:02d}_val_acc-{val_acc:.2f}.hdf5', monitor='val_acc', save_best_only=True, verbose=0);
-        best_model = keras.callbacks.ModelCheckpoint('Split-'+str(self.split )+'_best_model.hdf5', monitor='val_acc', save_best_only=True, verbose=0);
+        best_model = keras.callbacks.ModelCheckpoint('Split-'+str(self.split )+'_best_model.hdf5', monitor='val_accuracy', save_best_only=True, verbose=0);
         #early_stopping = keras.callbacks.EarlyStopping(monitor='loss', patience=100);
         csv_logger = keras.callbacks.CSVLogger('aug-fold-'+str(self.split)+'-training.log');
         custom_evaluator = CustomCallback(self.opt, trainGen, valGen);
