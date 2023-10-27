@@ -82,7 +82,7 @@ class CustomCallback(keras.callbacks.Callback):
 
     def on_epoch_end(self, epoch, logs=None):
         val_acc, val_loss = self.validate(self.model);
-        logs['val_acc'] = val_acc;
+        logs['val_accuracy'] = val_acc;
         logs['val_loss'] = val_loss;
         time_taken = time.time() - self.cur_epoch_start_time;
         sys.stderr.write('\r\033[K')
