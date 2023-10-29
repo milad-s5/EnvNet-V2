@@ -31,7 +31,7 @@ class Trainer:
         #best_model = keras.callbacks.ModelCheckpoint('best_model_fold-'+str(self.split )+'_epoch-{epoch:02d}_val_acc-{val_acc:.2f}.hdf5', monitor='val_acc', save_best_only=True, verbose=0);
         best_model = keras.callbacks.ModelCheckpoint('Split-'+str(self.split )+'_best_model.hdf5', monitor='val_accuracy', save_best_only=True, verbose=0);
         #early_stopping = keras.callbacks.EarlyStopping(monitor='loss', patience=100);
-        csv_logger = keras.callbacks.CSVLogger('aug-fold-'+str(self.split)+'-training.log');
+        csv_logger = keras.callbacks.CSVLogger('aug-fold-'+str(self.split)+'-training.csv', append=True);
         custom_evaluator = CustomCallback(self.opt, trainGen, valGen);
         #callbacks_list = [lrate, custom_evaluator, best_model, early_stopping, csv_logger];
         callbacks_list = [lrate, custom_evaluator, best_model, csv_logger];
@@ -39,8 +39,37 @@ class Trainer:
 
         #My custom data generator
         #model.fit_generator(trainGen, epochs=opt.nEpochs, steps_per_epoch=len(trainGen.data)//trainGen.batch_size, validation_data=valGen, validation_steps=math.ceil(len(valGen.data) / valGen.batch_size), callbacks=callbacks_list, verbose=1);
-        model.fit_generator(trainGen, epochs=self.opt.nEpochs, steps_per_epoch=len(trainGen.data)//trainGen.batch_size, callbacks=callbacks_list, verbose=0);
         #model.fit_generator(trainGen, epochs=self.opt.nEpochs, steps_per_epoch=1, callbacks=callbacks_list, verbose=0);
+        # model.fit_generator(trainGen, epochs=self.opt.nEpochs, steps_per_epoch=len(trainGen.data)//trainGen.batch_size, callbacks=callbacks_list, verbose=0);
+
+        # Check if the best model file exists, and if so, load it
+        if os.path.exists('Split-1_best_model.hdf5'):
+            model = keras.models.load_model('Split-1_best_model.hdf5')
+            
+            # Compile the loaded model with the same optimizer and loss
+            # model.compile(optimizer=optimizer, loss=loss, metrics=['accuracy'])
+
+            # Find the last completed epoch from the CSV log file
+            last_completed_epoch = 0
+            if os.path.exists('aug-fold-1-training.log'):
+                import pandas as pd
+                log_df = pd.read_csv('aug-fold-1-training.log')
+                last_completed_epoch = log_df['epoch'].iloc[-1]
+
+            # Continue training from the last completed epoch
+            history_continued = model.fit_generator(
+                trainGen,
+                epochs=self.opt.nEpochs,
+                steps_per_epoch=len(trainGen.data)//trainGen.batch_size,
+                initial_epoch=last_completed_epoch,  # Set the initial epoch
+                callbacks=callbacks_list,
+                verbose=0
+            )
+        else:
+            # If the best model file doesn't exist, start training from the beginning
+            history = model.fit_generator(trainGen, epochs=self.opt.nEpochs, steps_per_epoch=len(trainGen.data)//trainGen.batch_size, callbacks=callbacks_list, verbose=0);
+
+
 
         #print(model.summary());
     def GetLR(self, epoch):
