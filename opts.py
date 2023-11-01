@@ -72,7 +72,8 @@ def parse():
         if eval('opt.{}'.format(key)) == -1:
             setattr(opt, key, default_settings[opt.dataset][opt.netType][key])
             if key == 'nEpochs' and opt.BC:
-                opt.nEpochs *= 2
+                # opt.nEpochs *= 2
+                opt.nEpochs *= 1
 
 
     if opt.save != 'None' and not os.path.isdir(opt.save):

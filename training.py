@@ -51,9 +51,9 @@ class Trainer:
 
             # Find the last completed epoch from the CSV log file
             last_completed_epoch = 0
-            if os.path.exists('aug-fold-1-training.log'):
+            if os.path.exists('aug-fold-1-training.csv'):
                 import pandas as pd
-                log_df = pd.read_csv('aug-fold-1-training.log')
+                log_df = pd.read_csv('aug-fold-1-training.csv')
                 last_completed_epoch = log_df['epoch'].iloc[-1]
 
             # Continue training from the last completed epoch
